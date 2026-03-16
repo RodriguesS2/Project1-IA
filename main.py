@@ -20,6 +20,14 @@ BACKGROUND_COLOR = (255, 255, 255)
 LINE_COLOR = (255, 255, 255)
 LIGHT_COLOR_OFF = (255, 0, 255)
 
+game_board = []
+
+for i in range(GRID_SIZE):
+    row = []
+    for j in range(GRID_SIZE):
+        row.append(False)
+    game_board.append(row)
+
 def board(screen):
     screen.fill(BACKGROUND_COLOR)
 
@@ -47,10 +55,15 @@ def board(screen):
             x = MARGIN_LEFT + (column * CELL_SIZE)
             y = MARGIN_TOP + (line * CELL_SIZE)
 
+            if game_board[line][column]:
+                color = (255,255,0)   # light ON
+            else:
+                color = LIGHT_COLOR_OFF
+
             #desenha o fundo de cada quadrado
             pygame.draw.rect(
                 screen, 
-                LIGHT_COLOR_OFF, 
+                color, 
                 (x, y, CELL_SIZE, CELL_SIZE), 
                 border_radius = 8
             )
@@ -83,6 +96,15 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_x: #carregar no X fecha o jogo tbm
                     loop = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+
+                if (MARGIN_LEFT <= mouse_x and MARGIN_LEFT + BOARD_WIDTH >= mouse_x and MARGIN_TOP<=mouse_y and MARGIN_TOP+BOARD_HEIGHT>=mouse_y):
+                    col=(mouse_x-MARGIN_LEFT) // CELL_SIZE
+                    line=(mouse_y-MARGIN_TOP)//CELL_SIZE
+                    game_board[line][col]=not game_board[line][col]
+
 
         board(screen)
 
