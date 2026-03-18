@@ -22,14 +22,21 @@ BACKGROUND_COLOR = (255, 255, 255)
 LINE_COLOR = (255, 255, 255)
 LIGHT_COLOR_OFF = (255, 0, 255)
 LIGHT_COLOR_ON = (255,255,0)
+TEXT_COLOR = (0, 0, 0)
 
 #tempo
 TIME_START=120
 TIME_WON=10
 
 
-def board(screen, state):
+def board(screen, state, wins, time_left, font):
     screen.fill(BACKGROUND_COLOR)
+
+    text_win = font.render(f"Wins: {wins}", True, TEXT_COLOR)
+    text_time = font.render(f"Time: {int(time_left)}s", True, TEXT_COLOR)
+
+    screen.blit(text_win, (MARGIN_LEFT, MARGIN_TOP - 80))
+    screen.blit(text_time, (MARGIN_LEFT + BOARD_WIDTH - 150, MARGIN_TOP - 80))
 
     distance_board = 10
     
@@ -79,13 +86,16 @@ def board(screen, state):
 
 def main():
 
+    pygame.init()
+
+    font = pygame.font.SysFont(None, 48)
+    
     state = LightsOutState.generate_random_board(GRID_SIZE, NUM_MOVES)
 
     wins = 0
     time_left=TIME_START
     time1 = pygame.time.get_ticks()
 
-    pygame.init()
 
     screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
     pygame.display.set_caption("Lights Out")
@@ -111,6 +121,7 @@ def main():
                     col=(mouse_x-MARGIN_LEFT) // CELL_SIZE
                     line=(mouse_y-MARGIN_TOP)//CELL_SIZE
                     state = state.apply_move(line, col)
+                    
                     if state.is_goal():
                         wins += 1
                         time_left += TIME_WON  
@@ -130,7 +141,7 @@ def main():
             loop = False
 
 
-        board(screen, state)
+        board(screen, state, wins, time_left, font)
 
         #atualiza o que vemos depois de desenhar o tabuleiro
         pygame.display.flip()
