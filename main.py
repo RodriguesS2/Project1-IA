@@ -23,6 +23,10 @@ LINE_COLOR = (255, 255, 255)
 LIGHT_COLOR_OFF = (255, 0, 255)
 LIGHT_COLOR_ON = (255,255,0)
 
+#tempo
+TIME_START=120
+TIME_WON=10
+
 
 def board(screen, state):
     screen.fill(BACKGROUND_COLOR)
@@ -77,6 +81,10 @@ def main():
 
     state = LightsOutState.generate_random_board(GRID_SIZE, NUM_MOVES)
 
+    wins = 0
+    time_left=TIME_START
+    time1 = pygame.time.get_ticks()
+
     pygame.init()
 
     screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -104,8 +112,22 @@ def main():
                     line=(mouse_y-MARGIN_TOP)//CELL_SIZE
                     state = state.apply_move(line, col)
                     if state.is_goal():
-                        print("Ws in the chat")
-                        loop = False
+                        wins += 1
+                        time_left += TIME_WON  
+
+                        print(f"+{TIME_WON} seconds")
+
+                        state = LightsOutState.generate_random_board(GRID_SIZE, NUM_MOVES)
+
+        time2 = pygame.time.get_ticks()
+        dif = (time2 - time1) / 1000  
+        time1 = time2
+
+        time_left -= dif
+
+        if time_left <= 0:
+            print(f"Time's up! You won {wins} times!")
+            loop = False
 
 
         board(screen, state)
