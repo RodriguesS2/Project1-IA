@@ -1,5 +1,6 @@
 import random
 
+
 class LightsOutState:
 
     def __init__(self, board, size = 5):

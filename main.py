@@ -1,8 +1,10 @@
 import pygame
 import sys
+from state import LightsOutState
 
 #tabuleiro
 GRID_SIZE = 5
+NUM_MOVES = 10
 CELL_SIZE = 100
 BOARD_WIDTH = GRID_SIZE * CELL_SIZE
 BOARD_HEIGHT = GRID_SIZE * CELL_SIZE
@@ -19,16 +21,10 @@ WINDOW_HEIGHT = BOARD_HEIGHT + MARGIN_TOP + MARGIN_BOTTOM
 BACKGROUND_COLOR = (255, 255, 255)
 LINE_COLOR = (255, 255, 255)
 LIGHT_COLOR_OFF = (255, 0, 255)
+LIGHT_COLOR_ON = (255,255,0)
 
-game_board = []
 
-for i in range(GRID_SIZE):
-    row = []
-    for j in range(GRID_SIZE):
-        row.append(False)
-    game_board.append(row)
-
-def board(screen):
+def board(screen, state):
     screen.fill(BACKGROUND_COLOR)
 
     distance_board = 10
@@ -55,8 +51,8 @@ def board(screen):
             x = MARGIN_LEFT + (column * CELL_SIZE)
             y = MARGIN_TOP + (line * CELL_SIZE)
 
-            if game_board[line][column]:
-                color = (255,255,0)   # light ON
+            if state.board[line][column] == 1:
+                color = LIGHT_COLOR_ON
             else:
                 color = LIGHT_COLOR_OFF
 
@@ -78,6 +74,9 @@ def board(screen):
             )
 
 def main():
+
+    state = LightsOutState.generate_random_board(GRID_SIZE, NUM_MOVES)
+
     pygame.init()
 
     screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -103,10 +102,10 @@ def main():
                 if (MARGIN_LEFT <= mouse_x and MARGIN_LEFT + BOARD_WIDTH >= mouse_x and MARGIN_TOP<=mouse_y and MARGIN_TOP+BOARD_HEIGHT>=mouse_y):
                     col=(mouse_x-MARGIN_LEFT) // CELL_SIZE
                     line=(mouse_y-MARGIN_TOP)//CELL_SIZE
-                    game_board[line][col]=not game_board[line][col]
+                    state = state.apply_move(line, col)
 
 
-        board(screen)
+        board(screen, state)
 
         #atualiza o que vemos depois de desenhar o tabuleiro
         pygame.display.flip()
