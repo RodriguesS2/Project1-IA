@@ -103,6 +103,9 @@ def main():
                     col=(mouse_x-MARGIN_LEFT) // CELL_SIZE
                     line=(mouse_y-MARGIN_TOP)//CELL_SIZE
                     state = state.apply_move(line, col)
+                    if state.is_goal():
+                        print("Ws in the chat")
+                        loop = False
 
 
         board(screen, state)
