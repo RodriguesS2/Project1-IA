@@ -43,26 +43,28 @@ def draw_menu(screen, font):
     screen.blit(title, title_rect)
 
     # --- Buttons ---
-    button_width = 220
+    button_width = 250
     button_height = 60
     button_x = WINDOW_WIDTH // 2 - button_width // 2
     gap = 30
  
     play_y = WINDOW_HEIGHT // 2
     solver_y = play_y + button_height + gap
-    quit_y = solver_y + button_height + gap
+    file_y = solver_y + button_height + gap
+    quit_y = file_y + button_height + gap
  
     play_rect = pygame.Rect(button_x, play_y, button_width, button_height)
     solver_rect = pygame.Rect(button_x, solver_y, button_width, button_height)
+    file_rect = pygame.Rect(button_x, file_y, button_width, button_height)
     quit_rect = pygame.Rect(button_x, quit_y, button_width, button_height)
  
-    for rect, label in [(play_rect, "Play"), (solver_rect, "Solver"), (quit_rect, "Quit")]:
+    for rect, label in [(play_rect, "Play"), (solver_rect, "Solver"), (quit_rect, "Quit"), (file_rect, "Use File"),]:
         pygame.draw.rect(screen, LIGHT_COLOR_OFF, rect, border_radius=12)
         text = font.render(label, True, BACKGROUND_COLOR)
         text_rect = text.get_rect(center=rect.center)
         screen.blit(text, text_rect)
  
-    return play_rect, solver_rect, quit_rect
+    return play_rect, solver_rect, file_rect, quit_rect
 
 
 def draw_solver_menu(screen, font):
@@ -73,3 +75,27 @@ def draw_solver_menu(screen, font):
 def draw_solver_overlay(screen, move, font):
     """Draw an overlay showing the solver's current move on top of the board."""
     pass
+
+
+def draw_text_input(screen, font, prompt, current_text, error_message=""):
+    screen.fill(BACKGROUND_COLOR)
+    
+    #caixa
+    input_text = font.render(prompt, True, TEXT_COLOR)
+    screen.blit(input_text, (WINDOW_WIDTH // 2 - input_text.get_width() // 2, WINDOW_HEIGHT // 3))
+    
+    input_rect = pygame.Rect(WINDOW_WIDTH // 4, WINDOW_HEIGHT // 2, WINDOW_WIDTH // 2, 50)
+    pygame.draw.rect(screen, LIGHT_COLOR_OFF, input_rect, 2, border_radius=5)
+    
+    #pos escrita
+    text_pos = font.render(current_text + "|", True, LIGHT_COLOR_OFF) 
+    screen.blit(text_pos, (input_rect.x + 10, input_rect.y + 10))
+    
+    if error_message:
+        error_font = pygame.font.SysFont(None, 30)
+        error_message = error_font.render(error_message, True, (200, 50, 50))
+
+        screen.blit(error_message, (WINDOW_WIDTH // 2 - error_message.get_width() // 2, WINDOW_HEIGHT - 140))
+    
+    hint_message = pygame.font.SysFont(None, 24).render("Press ENTER to load or ESC to go back", True, (150, 150, 150))
+    screen.blit(hint_message, (WINDOW_WIDTH // 2 - hint_message.get_width() // 2, WINDOW_HEIGHT - 100))

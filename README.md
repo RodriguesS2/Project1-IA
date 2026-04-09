@@ -7,3 +7,6 @@ To run the venv use:
 To run the game:
 
 `python3 main.py`
+
+
+Nota: Ao criar o ficheiro para gerar o tabuleiro, não separar os elementos da matriz por virgula, apenas por espaços

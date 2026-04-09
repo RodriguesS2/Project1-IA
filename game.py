@@ -4,7 +4,7 @@ from draw import draw_board, draw_solver_overlay
 from constants import *
 
 
-def run_human_game(screen, font):
+def run_human_game(screen, font, file_board=None):
     """
     Main loop for the human-controlled game.
     Handles mouse clicks, timing, and win detection.
@@ -13,6 +13,12 @@ def run_human_game(screen, font):
     wins = 0
     time_left = TIME_START
     time1 = pygame.time.get_ticks()
+
+    #carregar o board se existir
+    if file_board:
+        state = file_board
+    else:
+        state = LightsOutState.generate_random_board(GRID_SIZE, NUM_MOVES)
 
     while True:
         for event in pygame.event.get():
@@ -27,6 +33,7 @@ def run_human_game(screen, font):
 
                 if (MARGIN_LEFT <= mouse_x <= MARGIN_LEFT + BOARD_WIDTH and
                         MARGIN_TOP <= mouse_y <= MARGIN_TOP + BOARD_HEIGHT):
+                    
                     col = (mouse_x - MARGIN_LEFT) // CELL_SIZE
                     line = (mouse_y - MARGIN_TOP) // CELL_SIZE
                     state = state.apply_move(line, col)

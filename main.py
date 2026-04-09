@@ -1,6 +1,6 @@
 import pygame
 import sys
-from menu import run_main_menu, run_solver_menu, MenuOption
+from menu import run_main_menu, run_solver_menu, MenuOption, run_file_input_menu
 from game import run_human_game, run_solver_game
 
 
@@ -16,10 +16,19 @@ def main():
 
         if choice == MenuOption.QUIT:
             break
+        
         elif choice == MenuOption.PLAY:
             run_human_game(screen, font)
+
+        elif choice == MenuOption.FILE:
+            board_from_file = run_file_input_menu(screen, font)
+
+            if board_from_file:
+                run_human_game(screen, font, file_board=board_from_file)
+        
         elif choice == MenuOption.SOLVER:
             algorithm = run_solver_menu(screen, font)
+            
             if algorithm != MenuOption.QUIT:
                 run_solver_game(screen, font, algorithm)
 

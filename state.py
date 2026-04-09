@@ -61,6 +61,41 @@ class LightsOutState:
                 neighbors.append((new_state, (row, col)))
 
         return neighbors
+    
+
+    @staticmethod
+    def read_from_txt(filepath):
+        try:
+            with open(filepath, 'r') as file:
+                lines = file.readlines()
+            
+            board = []
+            for line in lines:
+                row_values = line.strip().split()
+                
+                if row_values:
+                    #converte as strings para inteiros
+                    row = [int(val) for val in row_values]
+                    board.append(row)
+
+            size = len(board)
+            if size == 0:
+                return None
+
+            for row in board:
+                if len(row) != size:
+                    raise ValueError("The board needs to be a perfect square")
+                
+            #atualiza as var do board e size
+            return LightsOutState(board, size)
+            
+        except FileNotFoundError:
+            print(f"Error: '{filepath}' don´t exist")
+            return None
+        
+        except Exception as e:
+            print(f"Error: {e}")
+            return None
 
 
     def __eq__(self, other):
