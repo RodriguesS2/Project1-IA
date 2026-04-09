@@ -28,7 +28,26 @@ def solve_bfs(initial_state):
 
 
 def solve_dfs(initial_state):
-    pass
+    if initial_state.is_goal():
+        return []
+
+    #a stack guarda tuplos com estado, caminho
+    stack = [(initial_state, [])]
+    visited = set([initial_state])
+
+    while stack:
+        #ir buscar ultimo elemento adicionado
+        current_state, path = stack.pop() 
+
+        if current_state.is_goal():
+            return path
+
+        for next_state, move in current_state.get_neighbors():
+            if next_state not in visited:
+                visited.add(next_state)
+                stack.append((next_state, path + [move]))
+                
+    return None
 
 
 def solve_astar(initial_state, heuristic=None):
