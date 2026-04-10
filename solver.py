@@ -3,16 +3,52 @@ import heapq
 from collections import deque
 
 def solve_bfs(initial_state):
-    """
-    Solve the board using Breadth-First Search.
+    if initial_state.is_goal():
+        return []
+    
+    #queue guarda tuplos com estado atual e caminho (usado deque para facilitar remoção de elementos)
+    queue = deque([(initial_state, [])])
+    
+    #funciona com set graças ao hash e eq 
+    visited = set([initial_state])
 
-    Args:
-        initial_state: LightsOutState
+    while queue:
+        current_state, path = queue.popleft()
 
-    Returns:
-        List of (row, col) moves that lead to the goal, or None if unsolvable.
-    """
-    pass
+        for next_state, move in current_state.get_neighbors():
+            if next_state not in visited:
+                
+                #o prox passo é a solução
+                if next_state.is_goal():
+                    return path + [move]
+                
+                visited.add(next_state)
+                queue.append((next_state, path + [move]))
+                
+    return None
+
+
+def solve_dfs(initial_state):
+    if initial_state.is_goal():
+        return []
+
+    #a stack guarda tuplos com estado, caminho
+    stack = [(initial_state, [])]
+    visited = set([initial_state])
+
+    while stack:
+        #ir buscar ultimo elemento adicionado
+        current_state, path = stack.pop() 
+
+        if current_state.is_goal():
+            return path
+
+        for next_state, move in current_state.get_neighbors():
+            if next_state not in visited:
+                visited.add(next_state)
+                stack.append((next_state, path + [move]))
+                
+    return None
 
 
 def solve_astar(initial_state, heuristic=None, weight = 1.0):
