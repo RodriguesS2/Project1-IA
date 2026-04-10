@@ -69,7 +69,50 @@ def draw_menu(screen, font):
 
 def draw_solver_menu(screen, font):
     """Draw the algorithm selection screen (BFS, A*, etc.)."""
-    pass
+    screen.fill(BACKGROUND_COLOR)
+
+    # --- Title ---
+    title_font = pygame.font.SysFont(None, 80)
+    title = title_font.render("Select Algorithm", True, LIGHT_COLOR_OFF)
+    title_rect = title.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 5))
+    screen.blit(title, title_rect)
+
+    # --- Button grid: 2 columns, 3 rows ---
+    button_width = 220
+    button_height = 60
+    col_gap = 30
+    row_gap = 20
+
+    total_width = button_width * 2 + col_gap
+    start_x = WINDOW_WIDTH // 2 - total_width // 2
+    start_y = WINDOW_HEIGHT // 3
+
+    labels = ["BFS", "DFS", "A*", "Weighted A*", "IDS", "UCS", "Greedy"]
+    rects = []
+
+    for i, label in enumerate(labels):
+        col = i % 2
+        row = i // 2
+        x = start_x + col * (button_width + col_gap)
+        y = start_y + row * (button_height + row_gap)
+        rect = pygame.Rect(x, y, button_width, button_height)
+        rects.append(rect)
+        pygame.draw.rect(screen, LIGHT_COLOR_OFF, rect, border_radius=12)
+        text = font.render(label, True, BACKGROUND_COLOR)
+        screen.blit(text, text.get_rect(center=rect.center))
+
+    # --- Back button (centered below the grid) ---
+    back_rect = pygame.Rect(
+        WINDOW_WIDTH // 2 - button_width // 2,
+        start_y + 4 * (button_height + row_gap) + 10,
+        button_width,
+        button_height
+    )
+    pygame.draw.rect(screen, LIGHT_COLOR_OFF, back_rect, border_radius=12)
+    back_text = font.render("Back", True, BACKGROUND_COLOR)
+    screen.blit(back_text, back_text.get_rect(center=back_rect.center))
+
+    return (*rects, back_rect)
 
 
 def draw_solver_overlay(screen, move, font):

@@ -12,18 +12,16 @@ class MenuOption:
 
 class SolverOption:
     BFS = "bfs"
+    DFS = "dfs"
     ASTAR = "astar"
+    WEIGHTED_ASTAR = "weighted_astar"
+    IDS = "ids"
+    UCS = "ucs"
+    GREEDY = "greedy"
 
 
 def run_main_menu(screen, font):
-    """
-    Show the main menu and return the user's choice.
 
-    Returns:
-        MenuOption.PLAY   - user wants to play manually
-        MenuOption.SOLVER - user wants to watch a solver
-        MenuOption.QUIT   - user closed the window
-    """
     while True:
         play_rect, solver_rect, file_rect, quit_rect = draw_menu(screen, font)
         pygame.display.flip()
@@ -50,16 +48,40 @@ def run_main_menu(screen, font):
 
 
 def run_solver_menu(screen, font):
-    """
-    Show the algorithm selection screen and return the chosen algorithm.
-    Only reached if the user picked MenuOption.SOLVER.
 
-    Returns:
-        SolverOption.BFS   - breadth-first search
-        SolverOption.ASTAR - A* search
-        MenuOption.QUIT    - user closed the window
-    """
-    pass
+    while True:
+        rects = draw_solver_menu(screen, font)
+        pygame.display.flip()
+
+        bfs_rect, dfs_rect, astar_rect, wastar_rect, ids_rect, ucs_rect, greedy_rect, back_rect = rects
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return MenuOption.QUIT
+
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_x:
+                return MenuOption.QUIT
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if bfs_rect.collidepoint(event.pos):
+                    return SolverOption.BFS
+                if dfs_rect.collidepoint(event.pos):
+                    return SolverOption.DFS
+                if astar_rect.collidepoint(event.pos):
+                    return SolverOption.ASTAR
+                if wastar_rect.collidepoint(event.pos):
+                    weight = run_weight_input_menu(screen, font)
+                    if weight is None:
+                        return None
+                    return (SolverOption.WEIGHTED_ASTAR, weight)
+                if ids_rect.collidepoint(event.pos):
+                    return SolverOption.IDS
+                if ucs_rect.collidepoint(event.pos):
+                    return SolverOption.UCS
+                if greedy_rect.collidepoint(event.pos):
+                    return SolverOption.GREEDY
+                if back_rect.collidepoint(event.pos):
+                    return None
 
 
 def run_file_input_menu(screen, font):
@@ -104,3 +126,38 @@ def run_file_input_menu(screen, font):
                 else:
                     filename += event.unicode
                     error_message = "" #apaga erro quando escrevemos
+
+def run_weight_input_menu(screen, font):
+
+    weight_str = ""
+    error_message = ""
+
+    while True:
+        draw_text_input(screen, font, "Enter A* Weight (e.g. 1.5):", weight_str, error_message)
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return None
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    try:
+                        weight = float(weight_str)
+                        if weight <= 0:
+                            error_message = "Weight must be greater than 0!"
+                        else:
+                            return weight
+                    except ValueError:
+                        error_message = "Invalid number!"
+
+                elif event.key == pygame.K_BACKSPACE:
+                    weight_str = weight_str[:-1]
+                    error_message = ""
+
+                elif event.key == pygame.K_ESCAPE:
+                    return None
+
+                else:
+                    weight_str += event.unicode
+                    error_message = ""
