@@ -15,7 +15,7 @@ def solve_bfs(initial_state):
     pass
 
 
-def solve_astar(initial_state, heuristic=None):
+def solve_astar(initial_state, heuristic=None, weight = 1.0):
 
     if heuristic is None:
         heuristic = lights_on_count
@@ -45,15 +45,18 @@ def solve_astar(initial_state, heuristic=None):
         # Skip se já foi encontrado um caminho mais "barato" pra chegar a este state
         if g > best_g.get(hash(current_state), float('inf')):
             continue
- 
+        
+        # Analisar os estados vizinhos do current state
         for next_state, (row, col) in current_state.get_neighbors():
             next_hash = hash(next_state)
             next_g = g + 1
- 
+            
+            # se o state já tiver sido alcançado anteriormente,
+            # mas agora com custo menor, é colocado na queue
             if next_g < best_g.get(next_hash, float('inf')):
                 best_g[next_hash] = next_g
                 counter += 1
-                next_f = next_g + heuristic(next_state)
+                next_f = next_g + weight * heuristic(next_state)
                 heapq.heappush(heap, (next_f, counter, next_g, next_state, moves + [(row, col)]))
  
     return None
