@@ -116,6 +116,7 @@ def solve_ids(initial_state,max_depth=100):
 
     return None
 
+
 def dls(initial_state,depth_limit,explored,path=None):
     if path is None:
         path=[]
@@ -132,6 +133,7 @@ def dls(initial_state,depth_limit,explored,path=None):
             if result is not None:
                 return result
     return None
+
 
 def solve_ucs(initial_state):
     if initial_state.is_goal():
@@ -162,8 +164,9 @@ def solve_ucs(initial_state):
                 c+=1
                 heapq.heappush(to_visit, (new_cost, c, neighbor, new_path))
         
-        return None
+    return None
     
+
 def solve_greedy(initial_state, heuristic=None):
     if heuristic is None:
         heuristic = lights_on_count

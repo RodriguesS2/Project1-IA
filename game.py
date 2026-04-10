@@ -1,14 +1,12 @@
 import pygame
 from state import LightsOutState
 from draw import draw_board, draw_solver_overlay
+from solver import solve_dfs, solve_astar, solve_bfs, solve_ids, solve_ucs, solve_greedy
+from draw import draw_message
 from constants import *
 
 
 def run_human_game(screen, font, file_board=None):
-    """
-    Main loop for the human-controlled game.
-    Handles mouse clicks, timing, and win detection.
-    """
     state = LightsOutState.generate_random_board(GRID_SIZE, NUM_MOVES)
     wins = 0
     time_left = TIME_START
@@ -54,23 +52,72 @@ def run_human_game(screen, font, file_board=None):
         pygame.display.flip()
 
 
-def run_solver_game(screen, font, algorithm):
-    """
-    Main loop for the solver-controlled game.
-    Calls the appropriate solver, then steps through its moves visually.
+def run_solver_game(screen, font, algorithm, file_board=None):
 
-    Args:
-        algorithm: a SolverOption constant (e.g. SolverOption.BFS)
-    """
-    pass
+    if file_board:
+        initial_state = file_board
+    else:
+        initial_state = LightsOutState.generate_random_board(GRID_SIZE, NUM_MOVES)
+        
+    moves = None
+
+    #se for A*
+    if isinstance(algorithm, tuple):
+        algo_name, weight = algorithm
+    else:
+        algo_name = algorithm
+        weight = 1.0 #A* normal
+
+    if algorithm == "bfs":
+        moves = solve_bfs(initial_state)
+    
+    elif algorithm == "dfs":
+        moves = solve_dfs(initial_state)
+
+    elif algorithm == "greedy":
+        moves = solve_greedy(initial_state)
+
+    elif algorithm == "astar":
+        moves = solve_astar(initial_state)
+
+    elif algo_name == "weighted_astar":
+        moves = solve_astar(initial_state, weight=weight)
+
+    elif algorithm == "ids":
+        moves = solve_ids(initial_state)
+
+    elif algorithm == "ucs":
+        moves = solve_ucs(initial_state)
+
+    #encontrou solucação da display dos moves feitos
+    if moves is not None:
+        step_through_moves(screen, font, initial_state, moves)
+    
+    else:
+        #caso de erro 
+        draw_message(screen, font, "Error while solving")
 
 
-def _step_through_moves(screen, font, state, moves):
-    """
-    Animate a list of (row, col) moves on the board, one per frame/tick.
-    Used by run_solver_game once a solution is found.
+def step_through_moves(screen, font, state, moves):
+    #desenha tabuleiro inicial
+    draw_board(screen, state, wins=0, time_left=0, font=font)
+    pygame.display.flip()
+    pygame.time.wait(2000)
 
-    Args:
-        moves: list of (row, col) tuples returned by the solver
-    """
-    pass
+    for move in moves:
+        #caso queira sair
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+
+        row, col = move
+        state = state.apply_move(row, col)
+
+        draw_board(screen, state, wins=0, time_left=0, font=font)        
+        draw_solver_overlay(screen, move, font)
+        pygame.display.flip()
+        
+        #espera entre cada move
+        pygame.time.wait(1000) 
+
+    pygame.time.wait(500)

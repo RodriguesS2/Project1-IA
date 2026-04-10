@@ -36,13 +36,13 @@ def draw_menu(screen, font):
     screen.fill(BACKGROUND_COLOR)
 
 
-    # --- Title ---
+    #title
     title_font = pygame.font.SysFont(None, 80)
     title = title_font.render("Lights Out", True, LIGHT_COLOR_OFF)
     title_rect = title.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 3))
     screen.blit(title, title_rect)
 
-    # --- Buttons ---
+    #buttons
     button_width = 250
     button_height = 60
     button_x = WINDOW_WIDTH // 2 - button_width // 2
@@ -68,10 +68,9 @@ def draw_menu(screen, font):
 
 
 def draw_solver_menu(screen, font):
-    """Draw the algorithm selection screen (BFS, A*, etc.)."""
     screen.fill(BACKGROUND_COLOR)
 
-    # --- Title ---
+    #title 
     title_font = pygame.font.SysFont(None, 80)
     title = title_font.render("Select Algorithm", True, LIGHT_COLOR_OFF)
     title_rect = title.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 5))
@@ -116,8 +115,19 @@ def draw_solver_menu(screen, font):
 
 
 def draw_solver_overlay(screen, move, font):
-    """Draw an overlay showing the solver's current move on top of the board."""
-    pass
+    if move is None:
+        return
+        
+    row, col = move
+    
+    #calcula as coordenadas exatas do quadrado a aplicar o movimento
+    x = MARGIN_LEFT + (col * CELL_SIZE)
+    y = MARGIN_TOP + (row * CELL_SIZE)
+    
+    #desenha uma borda vermelha a volta do quadrado
+    highlight_color = (255, 50, 50) # Vermelho
+    pygame.draw.rect(screen, highlight_color, (x, y, CELL_SIZE, CELL_SIZE), 5, border_radius=8)
+    
 
 
 def draw_text_input(screen, font, prompt, current_text, error_message=""):
@@ -142,3 +152,15 @@ def draw_text_input(screen, font, prompt, current_text, error_message=""):
     
     hint_message = pygame.font.SysFont(None, 24).render("Press ENTER to load or ESC to go back", True, (150, 150, 150))
     screen.blit(hint_message, (WINDOW_WIDTH // 2 - hint_message.get_width() // 2, WINDOW_HEIGHT - 100))
+
+
+def draw_message(screen, font, message):
+    screen.fill(BACKGROUND_COLOR)
+    
+    text_surf = font.render(message, True, (200, 50, 50)) 
+    text_rect = text_surf.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
+    
+    screen.blit(text_surf, text_rect)
+    pygame.display.flip()
+    
+    pygame.time.wait(2000)
