@@ -53,24 +53,52 @@ def draw_menu(screen, font):
     button_height = 60
     button_x = WINDOW_WIDTH // 2 - button_width // 2
     gap = 30
- 
-    play_y = WINDOW_HEIGHT // 3
-    solver_y = play_y + button_height + gap
-    file_y = solver_y + button_height + gap
+
+    random_y = WINDOW_HEIGHT // 3
+    file_y = random_y + button_height + gap
     quit_y = file_y + button_height + gap
- 
-    play_rect = pygame.Rect(button_x, play_y, button_width, button_height)
-    solver_rect = pygame.Rect(button_x, solver_y, button_width, button_height)
+
+    random_rect = pygame.Rect(button_x, random_y, button_width, button_height)
     file_rect = pygame.Rect(button_x, file_y, button_width, button_height)
     quit_rect = pygame.Rect(button_x, quit_y, button_width, button_height)
- 
-    for rect, label in [(play_rect, "Play"), (solver_rect, "Solver"), (quit_rect, "Quit"), (file_rect, "Use File"),]:
-        pygame.draw.rect(screen, LIGHT_COLOR_OFF, rect, border_radius = 12)
+
+    for rect, label in [(random_rect, "Random Board"), (file_rect, "Use File"), (quit_rect, "Quit")]:
+        pygame.draw.rect(screen, LIGHT_COLOR_OFF, rect, border_radius=12)
         text = font.render(label, True, BACKGROUND_COLOR)
         text_rect = text.get_rect(center=rect.center)
         screen.blit(text, text_rect)
- 
-    return play_rect, solver_rect, file_rect, quit_rect
+
+    return random_rect, file_rect, quit_rect
+
+
+def draw_mode_menu(screen, font):
+    screen.fill(BACKGROUND_COLOR)
+
+    title_font = pygame.font.SysFont(None, 80)
+    title = title_font.render("Select Mode", True, LIGHT_COLOR_OFF)
+    title_rect = title.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 5))
+    screen.blit(title, title_rect)
+
+    button_width = 250
+    button_height = 60
+    button_x = WINDOW_WIDTH // 2 - button_width // 2
+    gap = 30
+
+    human_y = WINDOW_HEIGHT // 3
+    solver_y = human_y + button_height + gap
+    back_y = solver_y + button_height + gap
+
+    human_rect = pygame.Rect(button_x, human_y, button_width, button_height)
+    solver_rect = pygame.Rect(button_x, solver_y, button_width, button_height)
+    back_rect = pygame.Rect(button_x, back_y, button_width, button_height)
+
+    for rect, label in [(human_rect, "Play as Human"), (solver_rect, "Solver"), (back_rect, "Back")]:
+        pygame.draw.rect(screen, LIGHT_COLOR_OFF, rect, border_radius=12)
+        text = font.render(label, True, BACKGROUND_COLOR)
+        text_rect = text.get_rect(center=rect.center)
+        screen.blit(text, text_rect)
+
+    return human_rect, solver_rect, back_rect
 
 
 def draw_solver_menu(screen, font):
