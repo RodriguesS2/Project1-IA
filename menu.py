@@ -1,7 +1,7 @@
 import pygame
 from draw import draw_menu, draw_solver_menu, draw_text_input
 from state import LightsOutState
-from constants import GRID_SIZE
+from constants import GRID_SIZE, WINDOW_WIDTH, WINDOW_HEIGHT, BACKGROUND_COLOR, LIGHT_COLOR_OFF, DIFFICULTY_LEVELS
 
 
 class MenuOption:
@@ -22,7 +22,6 @@ class SolverOption:
 
 
 def run_main_menu(screen, font):
-
     while True:
         play_rect, solver_rect, file_rect, quit_rect = draw_menu(screen, font)
         pygame.display.flip()
@@ -49,7 +48,6 @@ def run_main_menu(screen, font):
 
 
 def run_solver_menu(screen, font):
-
     while True:
         rects = draw_solver_menu(screen, font)
         pygame.display.flip()
@@ -60,27 +58,39 @@ def run_solver_menu(screen, font):
             if event.type == pygame.QUIT:
                 return MenuOption.QUIT
 
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_x:
-                return MenuOption.QUIT
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_x:
+                    return MenuOption.QUIT
+                
+                if event.key == pygame.K_ESCAPE: 
+                    return None
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if bfs_rect.collidepoint(event.pos):
                     return SolverOption.BFS
+                
                 if dfs_rect.collidepoint(event.pos):
                     return SolverOption.DFS
+                
                 if astar_rect.collidepoint(event.pos):
                     return SolverOption.ASTAR
+                
                 if wastar_rect.collidepoint(event.pos):
                     weight = run_weight_input_menu(screen, font)
                     if weight is None:
                         return None
+                    
                     return (SolverOption.WEIGHTED_ASTAR, weight)
+                
                 if ids_rect.collidepoint(event.pos):
                     return SolverOption.IDS
+                
                 if ucs_rect.collidepoint(event.pos):
                     return SolverOption.UCS
+                
                 if greedy_rect.collidepoint(event.pos):
                     return SolverOption.GREEDY
+                
                 if back_rect.collidepoint(event.pos):
                     return None
 
@@ -103,7 +113,6 @@ def run_file_input_menu(screen, font):
                         error_message = "Invalid or empty name!"
                     
                     else:
-                        #le
                         path = "file_board/" + filename.strip()
                         if not path.endswith(".txt"):
                             path += ".txt"
@@ -151,6 +160,7 @@ def run_grid_size_menu(screen, font):
                         size = int(grid_str)
                         if size < 2:
                             error_message = "Size must be 2 or greater!"
+                        
                         else:
                             return size
                     except ValueError:
@@ -169,7 +179,6 @@ def run_grid_size_menu(screen, font):
 
 
 def run_weight_input_menu(screen, font):
-
     weight_str = ""
     error_message = ""
 
@@ -187,6 +196,7 @@ def run_weight_input_menu(screen, font):
                         weight = float(weight_str)
                         if weight <= 0:
                             error_message = "Weight must be greater than 0!"
+                        
                         else:
                             return weight
                     except ValueError:
@@ -202,3 +212,43 @@ def run_weight_input_menu(screen, font):
                 else:
                     weight_str += event.unicode
                     error_message = ""
+
+
+def run_difficulty_menu(screen, font):
+    button_width = 250
+    button_height = 60
+    gap = 20
+    start_y = WINDOW_HEIGHT // 3
+
+    buttons = {}
+    for i, label in enumerate(["Easy", "Medium", "Hard"]):
+        x = WINDOW_WIDTH // 2 - button_width // 2
+        y = start_y + i * (button_height + gap)
+        buttons[label] = pygame.Rect(x, y, button_width, button_height)
+
+    while True:
+        screen.fill(BACKGROUND_COLOR)
+
+        #titulo
+        title_font = pygame.font.SysFont(None, 80)
+        title = title_font.render("Difficulty", True, LIGHT_COLOR_OFF)
+        screen.blit(title, title.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 5)))
+
+        for label, rect in buttons.items():
+            pygame.draw.rect(screen, LIGHT_COLOR_OFF, rect, border_radius=12)
+            text = font.render(label, True, BACKGROUND_COLOR)
+            screen.blit(text, text.get_rect(center=rect.center))
+
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return None
+            
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                return None
+            
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for label, rect in buttons.items():
+                    if rect.collidepoint(event.pos):
+                        return DIFFICULTY_LEVELS[label]  #devolve o num_moves

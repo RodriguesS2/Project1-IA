@@ -1,11 +1,10 @@
-# --- Board ---
-GRID_SIZE = 5  # Se for preciso alteramos isto depois
+#board
+GRID_SIZE = 5  #default
 NUM_MOVES = 7
 CELL_SIZE = 100
 BOARD_WIDTH = GRID_SIZE * CELL_SIZE
 BOARD_HEIGHT = GRID_SIZE * CELL_SIZE
 
-# --- Margins ---
 MARGIN_TOP = 250
 MARGIN_BOTTOM = 250
 MARGIN_LEFT = 250
@@ -13,16 +12,21 @@ MARGIN_RIGHT = 250
 WINDOW_WIDTH = BOARD_WIDTH + MARGIN_LEFT + MARGIN_RIGHT
 WINDOW_HEIGHT = BOARD_HEIGHT + MARGIN_TOP + MARGIN_BOTTOM
 
-# --- Colors ---
+#colors
 BACKGROUND_COLOR = (250, 250, 250)
 LINE_COLOR = (250, 250, 250)
 LIGHT_COLOR_OFF = (84, 74, 174)
 LIGHT_COLOR_ON = (44, 174, 144)
 TEXT_COLOR = (0, 0, 0)
 
-# --- Timing ---
+#timers
 TIME_START = 120
 TIME_WON = 10
 
-#--- Results ---
 RESULTS_DIR = "results"
+
+DIFFICULTY_LEVELS = {
+    "Easy":   5,
+    "Medium": 10,
+    "Hard":   20
+}

@@ -12,7 +12,8 @@ def ensure_results_dir():
     if not os.path.exists(RESULTS_DIR):
         os.makedirs(RESULTS_DIR)
 
-def save_solver_results(algorithm_name, initial_state, moves, execution_time):
+
+def save_solver_results(algorithm_name, initial_state, moves, execution_time, metrics):
     ensure_results_dir()
     
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -28,9 +29,12 @@ def save_solver_results(algorithm_name, initial_state, moves, execution_time):
         f.write(f"Board Size: {board_size}x{board_size}\n")
         f.write(f"Date/Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
         f.write(f"Execution Time: {execution_time:.4f} seconds\n")
+        f.write(f"States Analyzed: {metrics['states_analyzed']}\n")
+        f.write(f"Max Memory (queue size): {metrics['max_memory']}\n")
         
         if moves is not None:
             f.write(f"Moves Found: {len(moves)}\n")
+        
         else:
             f.write(f"Moves Found: NO SOLUTION\n")
         
@@ -44,6 +48,7 @@ def save_solver_results(algorithm_name, initial_state, moves, execution_time):
             f.write("\n" + "-" * 70 + "\n")
             f.write("SOLUTION MOVES:\n")
             f.write("-" * 70 + "\n")
+            
             for i, (row, col) in enumerate(moves, 1):
                 f.write(f"Move {i:2d}: ({row}, {col})\n")
             
@@ -51,22 +56,22 @@ def save_solver_results(algorithm_name, initial_state, moves, execution_time):
             f.write("FINAL BOARD:\n")
             f.write("-" * 70 + "\n")
             final_state = initial_state
+            
             for row, col in moves:
                 final_state = final_state.apply_move(row, col)
+            
             for row in final_state.board:
                 f.write(" ".join(str(cell) for cell in row) + "\n")
+        
         else:
             f.write("\n" + "-" * 70 + "\n")
             f.write("NO SOLUTION FOUND\n")
             f.write("-" * 70 + "\n")
-        
-        f.write("\n" + "=" * 70 + "\n")
-        f.write("END OF REPORT\n")
-        f.write("=" * 70 + "\n")
     
     return filename
     
-def run_human_game(screen, font, file_board=None, grid_size=GRID_SIZE):
+
+def run_human_game(screen, font, file_board=None, grid_size=GRID_SIZE, num_moves=NUM_MOVES):
     wins = 0
     time_left = TIME_START
     time1 = pygame.time.get_ticks()
@@ -74,7 +79,7 @@ def run_human_game(screen, font, file_board=None, grid_size=GRID_SIZE):
     if file_board:
         state = file_board
     else:
-        state = LightsOutState.generate_random_board(grid_size, NUM_MOVES)
+        state = LightsOutState.generate_random_board(grid_size, num_moves)
 
     board_width = state.size * CELL_SIZE
     board_height = state.size * CELL_SIZE
@@ -85,6 +90,7 @@ def run_human_game(screen, font, file_board=None, grid_size=GRID_SIZE):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
+            
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_x:
                     return
@@ -92,8 +98,7 @@ def run_human_game(screen, font, file_board=None, grid_size=GRID_SIZE):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
 
-                if (board_x <= mouse_x <= board_x + board_width and
-                        board_y <= mouse_y <= board_y + board_height):
+                if (board_x <= mouse_x <= board_x + board_width and board_y <= mouse_y <= board_y + board_height):
                     
                     col = (mouse_x - board_x) // CELL_SIZE
                     line = (mouse_y - board_y) // CELL_SIZE
@@ -116,7 +121,6 @@ def run_human_game(screen, font, file_board=None, grid_size=GRID_SIZE):
 
 
 def run_solver_game(screen, font, algorithm, file_board=None, grid_size=GRID_SIZE):
-
     if file_board:
         initial_state = file_board
     else:
@@ -134,39 +138,39 @@ def run_solver_game(screen, font, algorithm, file_board=None, grid_size=GRID_SIZ
     start_time = pygame.time.get_ticks()
 
     if algorithm == "bfs":
-        moves = solve_bfs(initial_state)
+        moves, metrics = solve_bfs(initial_state)
     
     elif algorithm == "dfs":
-        moves = solve_dfs(initial_state)
-
+        moves, metrics = solve_dfs(initial_state)
+    
     elif algorithm == "greedy":
-        moves = solve_greedy(initial_state)
-
+        moves, metrics = solve_greedy(initial_state)
+    
     elif algorithm == "astar":
-        moves = solve_astar(initial_state)
-
+        moves, metrics = solve_astar(initial_state)
+    
     elif algo_name == "weighted_astar":
-        moves = solve_astar(initial_state, weight=weight)
-
+        moves, metrics = solve_astar(initial_state, weight=weight)
+    
     elif algorithm == "ids":
-        moves = solve_ids(initial_state)
-
+        moves, metrics = solve_ids(initial_state)
+    
     elif algorithm == "ucs":
-        moves = solve_ucs(initial_state)
+        moves, metrics = solve_ucs(initial_state)
 
     end_time = pygame.time.get_ticks()
     execution_time = (end_time - start_time)/1000
 
     algorithm_display = algo_name.upper() if algo_name != "weighted_astar" else "WEIGHTED_ASTAR"
-    filename = save_solver_results(algorithm_display, initial_state, moves, execution_time)
+    filename = save_solver_results(algorithm_display, initial_state, moves, execution_time, metrics)
     print(f"Results saved to: {filename}")
 
     #encontrou solucação da display dos moves feitos
     if moves is not None:
         step_through_moves(screen, font, initial_state, moves)
     
+    #caso de erro 
     else:
-        #caso de erro 
         draw_message(screen, font, f"No solution found!\nSaved to:\n{os.path.basename(filename)}")
 
 

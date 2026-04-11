@@ -9,7 +9,7 @@ def draw_board(screen, state, wins, time_left, font):
     board_width = board_size * CELL_SIZE
     board_height = board_size * CELL_SIZE
 
-    # Centralizar o board na tela
+    #centralizar o board na tela
     board_x = (WINDOW_WIDTH - board_width) // 2
     board_y = (WINDOW_HEIGHT - board_height) // 2
 
@@ -40,14 +40,12 @@ def draw_board(screen, state, wins, time_left, font):
 
 
 def draw_menu(screen, font):
-    """Draw the main menu with Play and Solver options."""
     screen.fill(BACKGROUND_COLOR)
-
 
     #title
     title_font = pygame.font.SysFont(None, 80)
     title = title_font.render("Lights Out", True, LIGHT_COLOR_OFF)
-    title_rect = title.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 3))
+    title_rect = title.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 5))
     screen.blit(title, title_rect)
 
     #buttons
@@ -56,7 +54,7 @@ def draw_menu(screen, font):
     button_x = WINDOW_WIDTH // 2 - button_width // 2
     gap = 30
  
-    play_y = WINDOW_HEIGHT // 2
+    play_y = WINDOW_HEIGHT // 3
     solver_y = play_y + button_height + gap
     file_y = solver_y + button_height + gap
     quit_y = file_y + button_height + gap
@@ -67,7 +65,7 @@ def draw_menu(screen, font):
     quit_rect = pygame.Rect(button_x, quit_y, button_width, button_height)
  
     for rect, label in [(play_rect, "Play"), (solver_rect, "Solver"), (quit_rect, "Quit"), (file_rect, "Use File"),]:
-        pygame.draw.rect(screen, LIGHT_COLOR_OFF, rect, border_radius=12)
+        pygame.draw.rect(screen, LIGHT_COLOR_OFF, rect, border_radius = 12)
         text = font.render(label, True, BACKGROUND_COLOR)
         text_rect = text.get_rect(center=rect.center)
         screen.blit(text, text_rect)
@@ -84,7 +82,6 @@ def draw_solver_menu(screen, font):
     title_rect = title.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 5))
     screen.blit(title, title_rect)
 
-    # --- Button grid: 2 columns, 3 rows ---
     button_width = 220
     button_height = 60
     col_gap = 30
@@ -104,18 +101,18 @@ def draw_solver_menu(screen, font):
         y = start_y + row * (button_height + row_gap)
         rect = pygame.Rect(x, y, button_width, button_height)
         rects.append(rect)
-        pygame.draw.rect(screen, LIGHT_COLOR_OFF, rect, border_radius=12)
+        pygame.draw.rect(screen, LIGHT_COLOR_OFF, rect, border_radius = 12)
         text = font.render(label, True, BACKGROUND_COLOR)
         screen.blit(text, text.get_rect(center=rect.center))
 
-    # --- Back button (centered below the grid) ---
     back_rect = pygame.Rect(
         WINDOW_WIDTH // 2 - button_width // 2,
         start_y + 4 * (button_height + row_gap) + 10,
         button_width,
         button_height
     )
-    pygame.draw.rect(screen, LIGHT_COLOR_OFF, back_rect, border_radius=12)
+
+    pygame.draw.rect(screen, LIGHT_COLOR_OFF, back_rect, border_radius = 12)
     back_text = font.render("Back", True, BACKGROUND_COLOR)
     screen.blit(back_text, back_text.get_rect(center=back_rect.center))
 
@@ -133,12 +130,12 @@ def draw_solver_overlay(screen, move, font, board_x, board_y):
     y = board_y + (row * CELL_SIZE)
     
     #desenha uma borda vermelha a volta do quadrado
-    highlight_color = (255, 50, 50) # Vermelho
-    pygame.draw.rect(screen, highlight_color, (x, y, CELL_SIZE, CELL_SIZE), 5, border_radius=8)
+    highlight_color = (255, 50, 50) 
+    pygame.draw.rect(screen, highlight_color, (x, y, CELL_SIZE, CELL_SIZE), 5, border_radius = 8)
     
 
 
-def draw_text_input(screen, font, prompt, current_text, error_message=""):
+def draw_text_input(screen, font, prompt, current_text, error_message = ""):
     screen.fill(BACKGROUND_COLOR)
     
     #caixa
