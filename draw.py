@@ -2,7 +2,7 @@ import pygame
 from constants import *
 
 
-def draw_board(screen, state, wins, time_left, font):
+def draw_board(screen, state, wins, time_left, font, hint_cell=None):
     screen.fill(BACKGROUND_COLOR)
 
     board_size = state.size
@@ -36,7 +36,31 @@ def draw_board(screen, state, wins, time_left, font):
 
             pygame.draw.rect(screen, color, (x, y, CELL_SIZE, CELL_SIZE), border_radius=8)
             pygame.draw.rect(screen, LINE_COLOR, (x, y, CELL_SIZE, CELL_SIZE), 2, border_radius=8)
+    
+    if hint_cell is not None:
+        hint_row, hint_col = hint_cell
+        x = board_x + (hint_col * CELL_SIZE)
+        y = board_y + (hint_row * CELL_SIZE)
+        pygame.draw.rect(screen, HINT_COLOR, (x, y, CELL_SIZE, CELL_SIZE), 5, border_radius=8)
+    
+    return board_x, board_y
 
+
+
+def draw_hint_button(screen, font, board_x, board_y, board_width):
+    button_width = 150
+    button_height = 50
+    button_x = board_x + board_width - button_width - 10
+    button_y = board_y + board_width + 20  
+    
+    hint_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+    pygame.draw.rect(screen, LIGHT_COLOR_OFF, hint_rect, border_radius=10)
+    
+    text = font.render("HINT", True, BACKGROUND_COLOR)
+    text_rect = text.get_rect(center=hint_rect.center)
+    screen.blit(text, text_rect)
+    
+    return hint_rect
 
 
 def draw_menu(screen, font):
