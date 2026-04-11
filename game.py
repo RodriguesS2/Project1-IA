@@ -1,6 +1,6 @@
 import pygame
 from state import LightsOutState
-from draw import draw_board, draw_solver_overlay
+from draw import draw_board, draw_solver_overlay, draw_hint_button
 from solver import solve_dfs, solve_astar, solve_bfs, solve_ids, solve_ucs, solve_greedy
 from draw import draw_message
 import os
@@ -76,6 +76,7 @@ def run_human_game(screen, font, file_board=None, grid_size=GRID_SIZE, num_moves
     wins = 0
     time_left = TIME_START
     time1 = pygame.time.get_ticks()
+    hint_cell = None
 
     if file_board:
         state = file_board
@@ -99,16 +100,26 @@ def run_human_game(screen, font, file_board=None, grid_size=GRID_SIZE, num_moves
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
 
+                hint_button = pygame.Rect(board_x + board_width - 160, board_y + board_height + 20, 150, 50)
+                if hint_button.collidepoint(mouse_x, mouse_y):
+                    #usa A* na hint
+                    solution, _ = solve_astar(state)
+                    if solution:
+                        hint_cell = solution[0]
+                    continue
+
                 if (board_x <= mouse_x <= board_x + board_width and board_y <= mouse_y <= board_y + board_height):
                     
                     col = (mouse_x - board_x) // CELL_SIZE
                     line = (mouse_y - board_y) // CELL_SIZE
                     state = state.apply_move(line, col)
+                    hint_cell = None   
 
                     if state.is_goal():
                         wins += 1
                         time_left += TIME_WON
                         state = LightsOutState.generate_random_board(state.size, NUM_MOVES)
+                        hint_cell = None
 
         time2 = pygame.time.get_ticks()
         time_left -= (time2 - time1) / 1000
@@ -117,7 +128,8 @@ def run_human_game(screen, font, file_board=None, grid_size=GRID_SIZE, num_moves
         if time_left <= 0:
             return wins
 
-        draw_board(screen, state, wins, time_left, font)
+        board_x, board_y = draw_board(screen, state, wins, time_left, font, hint_cell)
+        draw_hint_button(screen, font, board_x, board_y, board_width)
         pygame.display.flip()
 
 
