@@ -120,11 +120,11 @@ def run_human_game(screen, font, file_board=None, grid_size=GRID_SIZE, num_moves
         pygame.display.flip()
 
 
-def run_solver_game(screen, font, algorithm, file_board=None, grid_size=GRID_SIZE):
+def run_solver_game(screen, font, algorithm, file_board=None, grid_size=GRID_SIZE, num_moves=NUM_MOVES):
     if file_board:
         initial_state = file_board
     else:
-        initial_state = LightsOutState.generate_random_board(grid_size, NUM_MOVES)
+        initial_state = LightsOutState.generate_random_board(grid_size, num_moves)
         
     moves = None
 
