@@ -119,6 +119,46 @@ def draw_solver_menu(screen, font):
     return (*rects, back_rect)
 
 
+def draw_heuristic_menu(screen, font):
+    screen.fill(BACKGROUND_COLOR)
+
+    # title
+    title_font = pygame.font.SysFont(None, 80)
+    title = title_font.render("Select Heuristic", True, LIGHT_COLOR_OFF)
+    title_rect = title.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 5))
+    screen.blit(title, title_rect)
+
+    button_width = 250
+    button_height = 60
+    gap = 30
+
+    start_y = WINDOW_HEIGHT // 3
+
+    labels = ["Lights On Count", "Parity"]
+    rects = []
+
+    for i, label in enumerate(labels):
+        x = WINDOW_WIDTH // 2 - button_width // 2
+        y = start_y + i * (button_height + gap)
+        rect = pygame.Rect(x, y, button_width, button_height)
+        rects.append(rect)
+        pygame.draw.rect(screen, LIGHT_COLOR_OFF, rect, border_radius=12)
+        text = font.render(label, True, BACKGROUND_COLOR)
+        screen.blit(text, text.get_rect(center=rect.center))
+
+    back_rect = pygame.Rect(
+        WINDOW_WIDTH // 2 - button_width // 2,
+        start_y + len(labels) * (button_height + gap) + 10,
+        button_width,
+        button_height
+    )
+    pygame.draw.rect(screen, LIGHT_COLOR_OFF, back_rect, border_radius=12)
+    back_text = font.render("Back", True, BACKGROUND_COLOR)
+    screen.blit(back_text, back_text.get_rect(center=back_rect.center))
+
+    return (*rects, back_rect)
+
+
 def draw_solver_overlay(screen, move, font, board_x, board_y):
     if move is None:
         return
