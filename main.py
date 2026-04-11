@@ -1,12 +1,13 @@
 import pygame
 import sys
-from menu import run_main_menu, run_solver_menu, MenuOption, run_file_input_menu, run_grid_size_menu, run_difficulty_menu
+from menu import run_main_menu, run_mode_menu, run_solver_menu, MenuOption, run_file_input_menu, run_grid_size_menu, run_difficulty_menu
 from game import run_human_game, run_solver_game
+
+from constants import WINDOW_WIDTH, WINDOW_HEIGHT
 
 
 def main():
     pygame.init()
-    from constants import WINDOW_WIDTH, WINDOW_HEIGHT
     screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
     pygame.display.set_caption("Lights Out")
     font = pygame.font.SysFont(None, 48)
@@ -16,36 +17,57 @@ def main():
 
         if choice == MenuOption.QUIT:
             break
-        
-        elif choice == MenuOption.PLAY:
-            grid_size = run_grid_size_menu(screen, font)
-            
-            if grid_size is not None:
-                num_moves = run_difficulty_menu(screen, font)
-                
-                if num_moves is not None:
-                    run_human_game(screen, font, grid_size=grid_size, num_moves=num_moves)
 
-        elif choice == MenuOption.FILE:
-            board_from_file = run_file_input_menu(screen, font)
+        file_board_aux = None
+        grid_size_aux = None
+        num_moves_aux = None
 
-            if board_from_file:
-                run_human_game(screen, font, file_board=board_from_file)
+        if choice == MenuOption.FILE:
+            file_board_aux = run_file_input_menu(screen, font)
+            if file_board_aux is None:
+                continue  #volta para o menu
         
-        elif choice == MenuOption.SOLVER:
-            algorithm = run_solver_menu(screen, font)
+        #board aleatorio
+        else:
+            grid_size_aux = run_grid_size_menu(screen, font)
             
-            if algorithm is None:  
+            if grid_size_aux is None:
                 continue
             
-            if algorithm != MenuOption.QUIT:
-                grid_size = run_grid_size_menu(screen, font)
-                
-                if grid_size is not None:
-                    num_moves = run_difficulty_menu(screen, font)
-                    
-                    if num_moves is not None:
-                        run_solver_game(screen, font, algorithm, grid_size=grid_size, num_moves=num_moves)
+            num_moves_aux = run_difficulty_menu(screen, font)
+            
+            if num_moves_aux is None:
+                continue
+
+        # human ou solver
+        mode = run_mode_menu(screen, font)
+
+        if mode is None or mode == MenuOption.QUIT:
+            if mode == MenuOption.QUIT:
+                break
+            continue
+
+        if mode == MenuOption.PLAY:
+            if file_board_aux:
+                run_human_game(screen, font, file_board=file_board_aux)
+            
+            else:
+                run_human_game(screen, font, grid_size=grid_size_aux, num_moves=num_moves_aux)
+
+        elif mode == MenuOption.SOLVER:
+            algorithm = run_solver_menu(screen, font)
+
+            if algorithm is None:
+                continue
+            
+            if algorithm == MenuOption.QUIT:
+                break
+
+            if file_board_aux:
+                run_solver_game(screen, font, algorithm, file_board=file_board_aux)
+            
+            else:
+                run_solver_game(screen, font, algorithm, grid_size=grid_size_aux, num_moves=num_moves_aux)
 
     pygame.quit()
     sys.exit()

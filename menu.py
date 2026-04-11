@@ -1,5 +1,5 @@
 import pygame
-from draw import draw_menu, draw_solver_menu, draw_heuristic_menu, draw_text_input
+from draw import draw_menu, draw_mode_menu, draw_solver_menu, draw_heuristic_menu, draw_text_input
 from state import LightsOutState
 from constants import GRID_SIZE, WINDOW_WIDTH, WINDOW_HEIGHT, BACKGROUND_COLOR, LIGHT_COLOR_OFF, DIFFICULTY_LEVELS
 from solver import lights_on_count, parity_heuristic
@@ -23,28 +23,52 @@ class SolverOption:
 
 def run_main_menu(screen, font):
     while True:
-        play_rect, solver_rect, file_rect, quit_rect = draw_menu(screen, font)
+        random_board_rect, use_file_rect, quit_rect = draw_menu(screen, font)
         pygame.display.flip()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return MenuOption.QUIT
-            
+
             if event.type == pygame.KEYDOWN and event.key == pygame.K_x:
                 return MenuOption.QUIT
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if play_rect.collidepoint(event.pos):
+                if random_board_rect.collidepoint(event.pos):
                     return MenuOption.PLAY
-                
-                if solver_rect.collidepoint(event.pos):
-                    return MenuOption.SOLVER
-                
-                if file_rect.collidepoint(event.pos): 
+
+                if use_file_rect.collidepoint(event.pos):
                     return MenuOption.FILE
-                
+
                 if quit_rect.collidepoint(event.pos):
                     return MenuOption.QUIT
+
+
+def run_mode_menu(screen, font):
+    while True:
+        human_solve_rect, solver_rect, back_rect = draw_mode_menu(screen, font)
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return MenuOption.QUIT
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_x:
+                    return MenuOption.QUIT
+                
+                if event.key == pygame.K_ESCAPE:
+                    return None
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if human_solve_rect.collidepoint(event.pos):
+                    return MenuOption.PLAY
+
+                if solver_rect.collidepoint(event.pos):
+                    return MenuOption.SOLVER
+
+                if back_rect.collidepoint(event.pos):
+                    return None
 
 
 def run_solver_menu(screen, font):
