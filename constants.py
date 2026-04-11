@@ -23,3 +23,5 @@ TEXT_COLOR = (0, 0, 0)
 # --- Timing ---
 TIME_START = 120
 TIME_WON = 10
+
+RESULTS_DIR = "results"

@@ -3,9 +3,69 @@ from state import LightsOutState
 from draw import draw_board, draw_solver_overlay
 from solver import solve_dfs, solve_astar, solve_bfs, solve_ids, solve_ucs, solve_greedy
 from draw import draw_message
+import os
+from datetime import datetime
 from constants import *
 
 
+def ensure_results_dir():
+    if not os.path.exists(RESULTS_DIR):
+        os.makedirs(RESULTS_DIR)
+
+def save_solver_results(algorithm_name, initial_state, moves, execution_time):
+    ensure_results_dir()
+    
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    board_size = initial_state.size
+    filename = f"{RESULTS_DIR}/{algorithm_name}_{board_size}x{board_size}_{timestamp}.txt"
+    
+    with open(filename, 'w', encoding='utf-8') as f:
+        f.write("=" * 70 + "\n")
+        f.write("LIGHTS OUT - SOLVER RESULTS\n")
+        f.write("=" * 70 + "\n\n")
+        
+        f.write(f"Algorithm: {algorithm_name}\n")
+        f.write(f"Board Size: {board_size}x{board_size}\n")
+        f.write(f"Date/Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        f.write(f"Execution Time: {execution_time:.4f} seconds\n")
+        
+        if moves is not None:
+            f.write(f"Moves Found: {len(moves)}\n")
+        else:
+            f.write(f"Moves Found: NO SOLUTION\n")
+        
+        f.write("\n" + "-" * 70 + "\n")
+        f.write("INITIAL BOARD:\n")
+        f.write("-" * 70 + "\n")
+        for row in initial_state.board:
+            f.write(" ".join(str(cell) for cell in row) + "\n")
+        
+        if moves is not None and len(moves) > 0:
+            f.write("\n" + "-" * 70 + "\n")
+            f.write("SOLUTION MOVES:\n")
+            f.write("-" * 70 + "\n")
+            for i, (row, col) in enumerate(moves, 1):
+                f.write(f"Move {i:2d}: ({row}, {col})\n")
+            
+            f.write("\n" + "-" * 70 + "\n")
+            f.write("FINAL BOARD:\n")
+            f.write("-" * 70 + "\n")
+            final_state = initial_state
+            for row, col in moves:
+                final_state = final_state.apply_move(row, col)
+            for row in final_state.board:
+                f.write(" ".join(str(cell) for cell in row) + "\n")
+        else:
+            f.write("\n" + "-" * 70 + "\n")
+            f.write("NO SOLUTION FOUND\n")
+            f.write("-" * 70 + "\n")
+        
+        f.write("\n" + "=" * 70 + "\n")
+        f.write("END OF REPORT\n")
+        f.write("=" * 70 + "\n")
+    
+    return filename
+    
 def run_human_game(screen, font, file_board=None):
     state = LightsOutState.generate_random_board(GRID_SIZE, NUM_MOVES)
     wins = 0
@@ -68,6 +128,8 @@ def run_solver_game(screen, font, algorithm, file_board=None):
         algo_name = algorithm
         weight = 1.0 #A* normal
 
+    start_time = pygame.time.get_ticks()
+
     if algorithm == "bfs":
         moves = solve_bfs(initial_state)
     
@@ -89,13 +151,19 @@ def run_solver_game(screen, font, algorithm, file_board=None):
     elif algorithm == "ucs":
         moves = solve_ucs(initial_state)
 
+    end_time = pygame.time.get_ticks()
+    execution_time = (end_time - start_time)/1000
+
+    filename = save_solver_results(algo_display, initial_state, moves, execution_time)
+    print(f"Results saved to: {filename}")
+
     #encontrou solucação da display dos moves feitos
     if moves is not None:
         step_through_moves(screen, font, initial_state, moves)
     
     else:
         #caso de erro 
-        draw_message(screen, font, "Error while solving")
+        draw_message(screen, font, f"No solution found!\nSaved to:\n{os.path.basename(filename)}")
 
 
 def step_through_moves(screen, font, state, moves):
