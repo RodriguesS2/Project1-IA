@@ -5,24 +5,32 @@ from constants import *
 def draw_board(screen, state, wins, time_left, font):
     screen.fill(BACKGROUND_COLOR)
 
+    board_size = state.size
+    board_width = board_size * CELL_SIZE
+    board_height = board_size * CELL_SIZE
+
+    # Centralizar o board na tela
+    board_x = (WINDOW_WIDTH - board_width) // 2
+    board_y = (WINDOW_HEIGHT - board_height) // 2
+
     text_win = font.render(f"Wins: {wins}", True, TEXT_COLOR)
     text_time = font.render(f"Time: {int(time_left)}s", True, TEXT_COLOR)
 
-    screen.blit(text_win, (MARGIN_LEFT, MARGIN_TOP - 80))
-    screen.blit(text_time, (MARGIN_LEFT + BOARD_WIDTH - 150, MARGIN_TOP - 80))
+    screen.blit(text_win, (board_x, board_y - 80))
+    screen.blit(text_time, (board_x + board_width - 150, board_y - 80))
 
     distance_board = 10
-    box_x = MARGIN_LEFT - distance_board
-    box_y = MARGIN_TOP - distance_board
-    box_width = BOARD_WIDTH + (distance_board * 2)
-    box_height = BOARD_HEIGHT + (distance_board * 2)
+    box_x = board_x - distance_board
+    box_y = board_y - distance_board
+    box_width = board_width + (distance_board * 2)
+    box_height = board_height + (distance_board * 2)
 
     pygame.draw.rect(screen, LIGHT_COLOR_OFF, (box_x, box_y, box_width, box_height), 3, border_radius=20)
 
-    for line in range(GRID_SIZE):
-        for column in range(GRID_SIZE):
-            x = MARGIN_LEFT + (column * CELL_SIZE)
-            y = MARGIN_TOP + (line * CELL_SIZE)
+    for line in range(board_size):
+        for column in range(board_size):
+            x = board_x + (column * CELL_SIZE)
+            y = board_y + (line * CELL_SIZE)
 
             color = LIGHT_COLOR_ON if state.board[line][column] == 1 else LIGHT_COLOR_OFF
 
@@ -114,15 +122,15 @@ def draw_solver_menu(screen, font):
     return (*rects, back_rect)
 
 
-def draw_solver_overlay(screen, move, font):
+def draw_solver_overlay(screen, move, font, board_x, board_y):
     if move is None:
         return
         
     row, col = move
     
     #calcula as coordenadas exatas do quadrado a aplicar o movimento
-    x = MARGIN_LEFT + (col * CELL_SIZE)
-    y = MARGIN_TOP + (row * CELL_SIZE)
+    x = board_x + (col * CELL_SIZE)
+    y = board_y + (row * CELL_SIZE)
     
     #desenha uma borda vermelha a volta do quadrado
     highlight_color = (255, 50, 50) # Vermelho

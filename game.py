@@ -66,17 +66,20 @@ def save_solver_results(algorithm_name, initial_state, moves, execution_time):
     
     return filename
     
-def run_human_game(screen, font, file_board=None):
-    state = LightsOutState.generate_random_board(GRID_SIZE, NUM_MOVES)
+def run_human_game(screen, font, file_board=None, grid_size=GRID_SIZE):
     wins = 0
     time_left = TIME_START
     time1 = pygame.time.get_ticks()
 
-    #carregar o board se existir
     if file_board:
         state = file_board
     else:
-        state = LightsOutState.generate_random_board(GRID_SIZE, NUM_MOVES)
+        state = LightsOutState.generate_random_board(grid_size, NUM_MOVES)
+
+    board_width = state.size * CELL_SIZE
+    board_height = state.size * CELL_SIZE
+    board_x = (WINDOW_WIDTH - board_width) // 2
+    board_y = (WINDOW_HEIGHT - board_height) // 2
 
     while True:
         for event in pygame.event.get():
@@ -89,17 +92,17 @@ def run_human_game(screen, font, file_board=None):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
 
-                if (MARGIN_LEFT <= mouse_x <= MARGIN_LEFT + BOARD_WIDTH and
-                        MARGIN_TOP <= mouse_y <= MARGIN_TOP + BOARD_HEIGHT):
+                if (board_x <= mouse_x <= board_x + board_width and
+                        board_y <= mouse_y <= board_y + board_height):
                     
-                    col = (mouse_x - MARGIN_LEFT) // CELL_SIZE
-                    line = (mouse_y - MARGIN_TOP) // CELL_SIZE
+                    col = (mouse_x - board_x) // CELL_SIZE
+                    line = (mouse_y - board_y) // CELL_SIZE
                     state = state.apply_move(line, col)
 
                     if state.is_goal():
                         wins += 1
                         time_left += TIME_WON
-                        state = LightsOutState.generate_random_board(GRID_SIZE, NUM_MOVES)
+                        state = LightsOutState.generate_random_board(state.size, NUM_MOVES)
 
         time2 = pygame.time.get_ticks()
         time_left -= (time2 - time1) / 1000
@@ -112,12 +115,12 @@ def run_human_game(screen, font, file_board=None):
         pygame.display.flip()
 
 
-def run_solver_game(screen, font, algorithm, file_board=None):
+def run_solver_game(screen, font, algorithm, file_board=None, grid_size=GRID_SIZE):
 
     if file_board:
         initial_state = file_board
     else:
-        initial_state = LightsOutState.generate_random_board(GRID_SIZE, NUM_MOVES)
+        initial_state = LightsOutState.generate_random_board(grid_size, NUM_MOVES)
         
     moves = None
 
@@ -154,7 +157,8 @@ def run_solver_game(screen, font, algorithm, file_board=None):
     end_time = pygame.time.get_ticks()
     execution_time = (end_time - start_time)/1000
 
-    filename = save_solver_results(algo_display, initial_state, moves, execution_time)
+    algorithm_display = algo_name.upper() if algo_name != "weighted_astar" else "WEIGHTED_ASTAR"
+    filename = save_solver_results(algorithm_display, initial_state, moves, execution_time)
     print(f"Results saved to: {filename}")
 
     #encontrou solucação da display dos moves feitos
@@ -167,6 +171,11 @@ def run_solver_game(screen, font, algorithm, file_board=None):
 
 
 def step_through_moves(screen, font, state, moves):
+    board_width = state.size * CELL_SIZE
+    board_height = state.size * CELL_SIZE
+    board_x = (WINDOW_WIDTH - board_width) // 2
+    board_y = (WINDOW_HEIGHT - board_height) // 2
+
     #desenha tabuleiro inicial
     draw_board(screen, state, wins=0, time_left=0, font=font)
     pygame.display.flip()
@@ -182,7 +191,7 @@ def step_through_moves(screen, font, state, moves):
         state = state.apply_move(row, col)
 
         draw_board(screen, state, wins=0, time_left=0, font=font)        
-        draw_solver_overlay(screen, move, font)
+        draw_solver_overlay(screen, move, font, board_x, board_y)
         pygame.display.flip()
         
         #espera entre cada move

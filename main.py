@@ -1,6 +1,6 @@
 import pygame
 import sys
-from menu import run_main_menu, run_solver_menu, MenuOption, run_file_input_menu
+from menu import run_main_menu, run_solver_menu, MenuOption, run_file_input_menu, run_grid_size_menu
 from game import run_human_game, run_solver_game
 
 
@@ -18,7 +18,9 @@ def main():
             break
         
         elif choice == MenuOption.PLAY:
-            run_human_game(screen, font)
+            grid_size = run_grid_size_menu(screen, font)
+            if grid_size is not None:
+                run_human_game(screen, font, grid_size=grid_size)
 
         elif choice == MenuOption.FILE:
             board_from_file = run_file_input_menu(screen, font)
@@ -30,7 +32,9 @@ def main():
             algorithm = run_solver_menu(screen, font)
             
             if algorithm != MenuOption.QUIT:
-                run_solver_game(screen, font, algorithm)
+                grid_size = run_grid_size_menu(screen, font)
+                if grid_size is not None:
+                    run_solver_game(screen, font, algorithm, grid_size=grid_size)
 
     pygame.quit()
     sys.exit()

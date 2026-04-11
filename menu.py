@@ -1,6 +1,7 @@
 import pygame
 from draw import draw_menu, draw_solver_menu, draw_text_input
 from state import LightsOutState
+from constants import GRID_SIZE
 
 
 class MenuOption:
@@ -126,6 +127,46 @@ def run_file_input_menu(screen, font):
                 else:
                     filename += event.unicode
                     error_message = "" #apaga erro quando escrevemos
+
+
+def run_grid_size_menu(screen, font):
+    grid_str = ""
+    error_message = ""
+    prompt = f"Enter grid size (default {GRID_SIZE}):"
+
+    while True:
+        draw_text_input(screen, font, prompt, grid_str, error_message)
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return None
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    if not grid_str.strip():
+                        return GRID_SIZE
+
+                    try:
+                        size = int(grid_str)
+                        if size < 2:
+                            error_message = "Size must be 2 or greater!"
+                        else:
+                            return size
+                    except ValueError:
+                        error_message = "Invalid number!"
+
+                elif event.key == pygame.K_BACKSPACE:
+                    grid_str = grid_str[:-1]
+                    error_message = ""
+
+                elif event.key == pygame.K_ESCAPE:
+                    return None
+
+                else:
+                    grid_str += event.unicode
+                    error_message = ""
+
 
 def run_weight_input_menu(screen, font):
 
