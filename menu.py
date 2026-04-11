@@ -1,8 +1,8 @@
 import pygame
-from draw import draw_menu, draw_solver_menu, draw_text_input
+from draw import draw_menu, draw_solver_menu, draw_heuristic_menu, draw_text_input
 from state import LightsOutState
 from constants import GRID_SIZE, WINDOW_WIDTH, WINDOW_HEIGHT, BACKGROUND_COLOR, LIGHT_COLOR_OFF, DIFFICULTY_LEVELS
-
+from solver import lights_on_count, parity_heuristic
 
 class MenuOption:
     PLAY = "play"
@@ -91,6 +91,33 @@ def run_solver_menu(screen, font):
                 if greedy_rect.collidepoint(event.pos):
                     return SolverOption.GREEDY
                 
+                if back_rect.collidepoint(event.pos):
+                    return None
+
+
+def run_heuristic_menu(screen, font):
+    while True:
+        lights_rect, parity_rect, back_rect = draw_heuristic_menu(screen, font)
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return None
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_x:
+                    return None
+
+                if event.key == pygame.K_ESCAPE:
+                    return None
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if lights_rect.collidepoint(event.pos):
+                    return lights_on_count
+
+                if parity_rect.collidepoint(event.pos):
+                    return parity_heuristic
+
                 if back_rect.collidepoint(event.pos):
                     return None
 

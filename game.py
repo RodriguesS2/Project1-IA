@@ -6,6 +6,7 @@ from draw import draw_message
 import os
 from datetime import datetime
 from constants import *
+from menu import run_heuristic_menu
 
 
 def ensure_results_dir():
@@ -127,16 +128,16 @@ def run_solver_game(screen, font, algorithm, file_board=None, grid_size=GRID_SIZ
         initial_state = LightsOutState.generate_random_board(grid_size, num_moves)
         
     moves = None
-
+ 
     #se for A*
     if isinstance(algorithm, tuple):
         algo_name, weight = algorithm
     else:
         algo_name = algorithm
         weight = 1.0 #A* normal
-
+ 
     start_time = pygame.time.get_ticks()
-
+ 
     if algorithm == "bfs":
         moves, metrics = solve_bfs(initial_state)
     
@@ -144,27 +145,36 @@ def run_solver_game(screen, font, algorithm, file_board=None, grid_size=GRID_SIZ
         moves, metrics = solve_dfs(initial_state)
     
     elif algorithm == "greedy":
-        moves, metrics = solve_greedy(initial_state)
+        heuristic = run_heuristic_menu(screen, font)
+        if heuristic is None:
+            return
+        moves, metrics = solve_greedy(initial_state, heuristic=heuristic)
     
     elif algorithm == "astar":
-        moves, metrics = solve_astar(initial_state)
+        heuristic = run_heuristic_menu(screen, font)
+        if heuristic is None:
+            return
+        moves, metrics = solve_astar(initial_state, heuristic=heuristic)
     
     elif algo_name == "weighted_astar":
-        moves, metrics = solve_astar(initial_state, weight=weight)
+        heuristic = run_heuristic_menu(screen, font)
+        if heuristic is None:
+            return
+        moves, metrics = solve_astar(initial_state, heuristic=heuristic, weight=weight)
     
     elif algorithm == "ids":
         moves, metrics = solve_ids(initial_state)
     
     elif algorithm == "ucs":
         moves, metrics = solve_ucs(initial_state)
-
+ 
     end_time = pygame.time.get_ticks()
     execution_time = (end_time - start_time)/1000
-
+ 
     algorithm_display = algo_name.upper() if algo_name != "weighted_astar" else "WEIGHTED_ASTAR"
     filename = save_solver_results(algorithm_display, initial_state, moves, execution_time, metrics)
     print(f"Results saved to: {filename}")
-
+ 
     #encontrou solucação da display dos moves feitos
     if moves is not None:
         step_through_moves(screen, font, initial_state, moves)

@@ -118,14 +118,6 @@ def solve_astar(initial_state, heuristic=None, weight = 1.0):
 
     return None, {"states_analyzed": states_analyzed, "max_memory": max_memory}
 
-
-def lights_on_count(state):
-
-    # Número de luzes acesas é usado como heurística, pois cada move altera no
-    # máximo 5 quadrados, portanto no mínimo serão usados ("lights_on" / 5) moves.
-    return sum(cell for row in state.board for cell in row)
-
-
 def solve_ids(initial_state, max_depth=100):
     if initial_state.is_goal():
         return [], {"states_analyzed": 0, "max_memory": 0}
@@ -253,3 +245,37 @@ def solve_greedy(initial_state, heuristic=None):
         max_memory = max(max_memory, len(to_visit))
 
     return None, {"states_analyzed": states_analyzed, "max_memory": max_memory}
+
+
+def lights_on_count(state):
+
+    # Número de luzes acesas é usado como heurística, pois cada move altera no
+    # máximo 5 quadrados, portanto no mínimo serão usados ("lights_on" / 5) moves.
+    return sum(cell for row in state.board for cell in row)
+
+def parity_heuristic(state):
+ 
+    # Luzes nos cantos só são afetadas por 2 moves cada, nas arestas por 3,
+    # e no centro por 4 ou 5. Penalizamos mais as luzes difíceis de apagar.
+    corner_weight = 1.0   # cantos: apenas 2 moves as afetam
+    edge_weight = 0.6     # arestas: 3 moves as afetam
+    center_weight = 0.4   # centro: 4-5 moves as afetam
+ 
+    size = state.size
+    last = size - 1
+    total = 0.0
+ 
+    for row in range(size):
+        for col in range(size):
+            if state.board[row][col] == 1:
+                is_corner = (row in (0, last)) and (col in (0, last))
+                is_edge = (row in (0, last)) or (col in (0, last))
+ 
+                if is_corner:
+                    total += corner_weight
+                elif is_edge:
+                    total += edge_weight
+                else:
+                    total += center_weight
+ 
+    return total
