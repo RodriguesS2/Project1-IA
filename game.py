@@ -76,7 +76,6 @@ def run_human_game(screen, font, file_board=None, grid_size=GRID_SIZE, num_moves
     time_left = TIME_START
     time1 = pygame.time.get_ticks()
     hint_cell = None
-    hint_display_time = 0
 
     if file_board:
         state = file_board
@@ -106,7 +105,6 @@ def run_human_game(screen, font, file_board=None, grid_size=GRID_SIZE, num_moves
                     solution, _ = solve_astar(state)
                     if solution:
                         hint_cell = solution[0]
-                        hint_display_time = pygame.time.get_ticks()
                     continue
 
                 if (board_x <= mouse_x <= board_x + board_width and board_y <= mouse_y <= board_y + board_height):
