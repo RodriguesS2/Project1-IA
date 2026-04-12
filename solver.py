@@ -253,6 +253,7 @@ def lights_on_count(state):
     # máximo 5 quadrados, portanto no mínimo serão usados ("lights_on" / 5) moves.
     return sum(cell for row in state.board for cell in row)
 
+
 def parity_heuristic(state):
  
     # Luzes nos cantos só são afetadas por 2 moves cada, nas arestas por 3,
@@ -273,9 +274,35 @@ def parity_heuristic(state):
  
                 if is_corner:
                     total += corner_weight
+                
                 elif is_edge:
                     total += edge_weight
+                
                 else:
                     total += center_weight
+ 
+    return total
+
+
+def isolated_lights_heuristic(state):
+ 
+    #luzes isoladas (sem vizinhos acesos) são mais difícil de apagar,
+    #pois al clicas acendemos as celulas adjacentes
+    isolated_weight = 2.0   #luz acesa sem nenhum vizinho aceso (mais pesada)
+    grouped_weight  = 0.5   #luz acesa com pelo menos um vizinho aceso
+ 
+    size = state.size
+    total = 0.0
+    neighbors_offsets = [(-1, 0), (1, 0), (0, -1), (0, 1)] #pos dos vizinhos
+ 
+    for row in range(size):
+        for col in range(size):
+            if state.board[row][col] == 1:
+                has_lit_neighbor = any(
+                    0 <= row + pos_row < size and 0 <= col + pos_col < size and state.board[row + pos_row][col + pos_col] == 1
+                    for pos_row, pos_col in neighbors_offsets
+                )
+                
+                total += grouped_weight if has_lit_neighbor else isolated_weight
  
     return total

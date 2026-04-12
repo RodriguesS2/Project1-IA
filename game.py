@@ -14,7 +14,7 @@ def ensure_results_dir():
         os.makedirs(RESULTS_DIR)
 
 
-def save_solver_results(algorithm_name, initial_state, moves, execution_time, metrics):
+def save_solver_results(algorithm_name, initial_state, moves, execution_time, metrics, heuristic_name=None):
     ensure_results_dir()
     
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -27,6 +27,11 @@ def save_solver_results(algorithm_name, initial_state, moves, execution_time, me
         f.write("=" * 70 + "\n\n")
         
         f.write(f"Algorithm: {algorithm_name}\n")
+        
+        #heurística usada se existir
+        if heuristic_name:
+            f.write(f"Heuristic: {heuristic_name}\n")
+        
         f.write(f"Board Size: {board_size}x{board_size}\n")
         f.write(f"Date/Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
         f.write(f"Execution Time: {execution_time:.4f} seconds\n")
@@ -70,7 +75,16 @@ def save_solver_results(algorithm_name, initial_state, moves, execution_time, me
             f.write("-" * 70 + "\n")
     
     return filename
-    
+
+
+def get_heuristic_name(heuristic_used):
+    names = {
+        "lights_on_count":        "Lights On Count",
+        "parity_heuristic":       "Parity",
+        "isolated_lights_heuristic": "Isolated Lights"
+    }
+    return names.get(heuristic_used.__name__, heuristic_used.__name__)
+
 
 def run_human_game(screen, font, file_board=None, grid_size=GRID_SIZE, num_moves=NUM_MOVES):
     wins = 0
@@ -140,6 +154,7 @@ def run_solver_game(screen, font, algorithm, file_board=None, grid_size=GRID_SIZ
         initial_state = LightsOutState.generate_random_board(grid_size, num_moves)
         
     moves = None
+    heuristic_name = None
  
     #se for A*
     if isinstance(algorithm, tuple):
@@ -160,18 +175,24 @@ def run_solver_game(screen, font, algorithm, file_board=None, grid_size=GRID_SIZ
         heuristic = run_heuristic_menu(screen, font)
         if heuristic is None:
             return
+        
+        heuristic_name = get_heuristic_name(heuristic)
         moves, metrics = solve_greedy(initial_state, heuristic=heuristic)
-    
+
     elif algorithm == "astar":
         heuristic = run_heuristic_menu(screen, font)
         if heuristic is None:
             return
+        
+        heuristic_name = get_heuristic_name(heuristic)
         moves, metrics = solve_astar(initial_state, heuristic=heuristic)
-    
+
     elif algo_name == "weighted_astar":
         heuristic = run_heuristic_menu(screen, font)
         if heuristic is None:
             return
+        
+        heuristic_name = get_heuristic_name(heuristic)
         moves, metrics = solve_astar(initial_state, heuristic=heuristic, weight=weight)
     
     elif algorithm == "ids":
@@ -181,10 +202,10 @@ def run_solver_game(screen, font, algorithm, file_board=None, grid_size=GRID_SIZ
         moves, metrics = solve_ucs(initial_state)
  
     end_time = pygame.time.get_ticks()
-    execution_time = (end_time - start_time)/1000
+    execution_time = (end_time - start_time) / 1000
  
     algorithm_display = algo_name.upper() if algo_name != "weighted_astar" else "WEIGHTED_ASTAR"
-    filename = save_solver_results(algorithm_display, initial_state, moves, execution_time, metrics)
+    filename = save_solver_results(algorithm_display, initial_state, moves, execution_time, metrics, heuristic_name)
     print(f"Results saved to: {filename}")
  
     #encontrou solucação da display dos moves feitos

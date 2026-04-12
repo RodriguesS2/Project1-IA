@@ -180,13 +180,13 @@ def draw_heuristic_menu(screen, font):
     title_rect = title.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 5))
     screen.blit(title, title_rect)
 
-    button_width = 250
+    button_width = 270
     button_height = 60
     gap = 30
 
     start_y = WINDOW_HEIGHT // 3
 
-    labels = ["Lights On Count", "Parity"]
+    labels = ["Lights On Count", "Parity", "Isolated Lights"]
     rects = []
 
     for i, label in enumerate(labels):
@@ -204,6 +204,7 @@ def draw_heuristic_menu(screen, font):
         button_width,
         button_height
     )
+
     pygame.draw.rect(screen, LIGHT_COLOR_OFF, back_rect, border_radius=12)
     back_text = font.render("Back", True, BACKGROUND_COLOR)
     screen.blit(back_text, back_text.get_rect(center=back_rect.center))
