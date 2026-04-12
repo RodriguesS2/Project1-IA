@@ -118,6 +118,7 @@ def solve_astar(initial_state, heuristic=None, weight = 1.0):
 
     return None, {"states_analyzed": states_analyzed, "max_memory": max_memory}
 
+
 def solve_ids(initial_state, max_depth=100):
     if initial_state.is_goal():
         return [], {"states_analyzed": 0, "max_memory": 0}

@@ -79,10 +79,11 @@ def save_solver_results(algorithm_name, initial_state, moves, execution_time, me
 
 def get_heuristic_name(heuristic_used):
     names = {
-        "lights_on_count":        "Lights On Count",
-        "parity_heuristic":       "Parity",
+        "lights_on_count": "Lights On Count",
+        "parity_heuristic": "Parity",
         "isolated_lights_heuristic": "Isolated Lights"
     }
+
     return names.get(heuristic_used.__name__, heuristic_used.__name__)
 
 
@@ -120,10 +121,10 @@ def run_human_game(screen, font, file_board=None, grid_size=GRID_SIZE, num_moves
                     solution, _ = solve_astar(state)
                     if solution:
                         hint_cell = solution[0]
+                    
                     continue
 
                 if (board_x <= mouse_x <= board_x + board_width and board_y <= mouse_y <= board_y + board_height):
-                    
                     col = (mouse_x - board_x) // CELL_SIZE
                     line = (mouse_y - board_y) // CELL_SIZE
                     state = state.apply_move(line, col)

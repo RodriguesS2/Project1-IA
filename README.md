@@ -3,10 +3,15 @@
 ## Em MAC:
 * **Criar o ambiente virtual:** `python3 -m venv venv`
 * **Ativar o ambiente virtual:** `source venv/bin/activate`
+* **Instalar dependências:** `pip install pygame`
 * **Para executar o programa:** `python3 main.py`
 
 ## Em WINDOWS/UBUNTU:
-
+* **Criar o ambiente virtual:** `python -m venv venv`
+* **Ativar o ambiente virtual (Linux):** `source venv/bin/activate`
+* **Ativar o ambiente virtual (Windows):** `venv\Scripts\activate`
+* **Instalar dependências:** `pip install pygame`
+* **Para executar o programa:** `python main.py`
 
 ## Para criar ficheiros .txt para serem usados no jogo:
 * **Matriz:** Matriz de bits (0 para luz desligada e 1 para luz ligada)
