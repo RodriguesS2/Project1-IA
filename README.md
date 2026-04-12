@@ -13,10 +13,11 @@
 * **Atenção:** Os elementos da matriz devem ser separados apenas por espaços
 
 **Exemplo de matriz (3x3):**
-```text
+```
 1 1 0
 1 0 1
 0 1 1
+```
 
 
 
