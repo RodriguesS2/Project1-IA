@@ -1,20 +1,28 @@
-To run the venv use:
+# Para utilizar o programa:
 
-`python3 -m venv venv`
+## Em MAC:
+* **Criar o ambiente virtual:** `python3 -m venv venv`
+* **Ativar o ambiente virtual:** `source venv/bin/activate`
+* **Para executar o programa:** `python3 main.py`
 
-`source venv/bin/activate`
-
-To run the game:
-
-`python3 main.py`
-
-
-Nota: Ao criar o ficheiro para gerar o tabuleiro, não separar os elementos da matriz por virgula, apenas por espaços
+## Em WINDOWS/UBUNTU:
 
 
-# Resultados do Benchmarking - Lights Out Solver
+## Para criar ficheiros .txt para serem usados no jogo:
+* **Matriz:** Matriz de bits (0 para luz desligada e 1 para luz ligada)
+* **Atenção:** Os elementos da matriz devem ser separados apenas por espaços
 
-A tabela abaixo apresenta a comparação de performance entre os algoritmos implementados, variando o tamanho do tabuleiro ($N \times N$). Todos os testes foram realizados com tabuleiros gerados a partir de 10 movimentos aleatórios (Dificuldade Média).
+**Exemplo de matriz (3x3):**
+```text
+1 1 0
+1 0 1
+0 1 1
+
+
+
+# Tabela info - Lights Out Solver
+
+A tabela abaixo apresenta a comparação de performance entre os algoritmos implementados, variando o tamanho do tabuleiro ($N \times N$). Todos os testes foram realizados com tabuleiros gerados a partir de 10 movimentos aleatórios (dificuldade média) e foi utilizado o mesmo tabuleiro (para cada tamanho) em todos os algoritmos
 
 | Algoritmo | Tamanho | Tempo (s) | Movimentos | Memória (Máx) | Estados Analisados |
 | :--- | :---: | :--- | :---: | :--- | :--- |
@@ -72,8 +80,8 @@ A tabela abaixo apresenta a comparação de performance entre os algoritmos impl
 | **Wheighted Astar - Isolated Lights** | 6 | 0.9410 | 8 | 521 | 17 |
 
 
-**Notas sobre as métricas:**
-* **Tempo (s):** Tempo total de execução do solver em segundos.
-* **Movimentos:** Número de cliques na solução encontrada (Qualidade da Solução).
-* **Memória:** Tamanho máximo atingido pela estrutura de dados de suporte (Fila/Pilha/Heap).
-* **Estados:** Número total de configurações de tabuleiro analisadas durante a procura.
+**Nota:**
+* **Tempo (s):** Tempo total de execução do solver em segundos
+* **Movimentos:** Número de cliques na solução encontrada (quão ótima é a solução)
+* **Memória:** Tamanho máximo atingido pela estrutura de dados de suporte
+* **Estados:** Número total de configurações de tabuleiro analisadas durante a procura
