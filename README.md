@@ -10,7 +10,7 @@
 
 ## Para criar ficheiros .txt para serem usados no jogo:
 * **Matriz:** Matriz de bits (0 para luz desligada e 1 para luz ligada)
-* **Atenção:** Os elementos da matriz devem ser separados apenas por espaços
+* **Atenção:** Os elementos da matriz devem ser separados apenas por espaços e o jogo suporta **APENAS MATRIZES QUADRADAS**
 
 **Exemplo de matriz (3x3):**
 ```
